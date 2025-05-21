@@ -34,15 +34,21 @@ app.get('/eligibility', async (req, res) => {
         await page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 20000 });
 
         // Scrape eligibility
-        const eligibilityText = await page.evaluate(() => {
+        const sectionText = await page.evaluate(() => {
+            // Find the relevant section/heading (adjust as needed)
             const spans = Array.from(document.querySelectorAll('span'));
-            const eligibilitySpan = spans.find(span => span.textContent.trim() === 'Eligibility:');
-            if (!eligibilitySpan) return '';
-            const listDescDiv = eligibilitySpan.closest('div.list-desc');
+            // For eligibility: 'Eligibility:', for rules: 'Instructions for Application Submission', etc.
+            const label = 'Eligibility'; // Replace as needed
+            const targetSpan = spans.find(span => span.textContent.trim().includes(label));
+            if (!targetSpan) return '';
+            const listDescDiv = targetSpan.closest('div.list-desc');
             if (!listDescDiv) return '';
             const innerDiv = listDescDiv.querySelector('div.list-desc-inner');
             if (!innerDiv) return '';
-            return Array.from(innerDiv.querySelectorAll('p')).map(p => p.textContent.trim()).filter(Boolean).join('\n');
+            // Extract both paragraphs and list items
+            const paragraphs = Array.from(innerDiv.querySelectorAll('p')).map(p => p.textContent.trim());
+            const listItems = Array.from(innerDiv.querySelectorAll('li')).map(li => li.textContent.trim());
+            return [...paragraphs, ...listItems].filter(Boolean).join('\n');
         });
 
         await browser.close();
@@ -79,15 +85,21 @@ app.get('/rules', async (req, res) => {
         await page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 20000 });
 
         // Scrape application rules
-        const rulesText = await page.evaluate(() => {
+        const sectionText = await page.evaluate(() => {
+            // Find the relevant section/heading (adjust as needed)
             const spans = Array.from(document.querySelectorAll('span'));
-            const rulesSpan = spans.find(span => span.textContent.trim().includes('Instructions for Application Submission'));
-            if (!rulesSpan) return '';
-            const listDescDiv = rulesSpan.closest('div.list-desc');
+            // For eligibility: 'Eligibility:', for rules: 'Instructions for Application Submission', etc.
+            const label = 'Instructions for Application Submission'; // Replace as needed
+            const targetSpan = spans.find(span => span.textContent.trim().includes(label));
+            if (!targetSpan) return '';
+            const listDescDiv = targetSpan.closest('div.list-desc');
             if (!listDescDiv) return '';
             const innerDiv = listDescDiv.querySelector('div.list-desc-inner');
             if (!innerDiv) return '';
-            return Array.from(innerDiv.querySelectorAll('p')).map(p => p.textContent.trim()).filter(Boolean).join('\n');
+            // Extract both paragraphs and list items
+            const paragraphs = Array.from(innerDiv.querySelectorAll('p')).map(p => p.textContent.trim());
+            const listItems = Array.from(innerDiv.querySelectorAll('li')).map(li => li.textContent.trim());
+            return [...paragraphs, ...listItems].filter(Boolean).join('\n');
         });
 
         await browser.close();
@@ -124,15 +136,21 @@ app.get('/other', async (req, res) => {
         await page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 20000 });
 
         // Scrape application rules
-        const rulesText = await page.evaluate(() => {
+        const sectionText = await page.evaluate(() => {
+            // Find the relevant section/heading (adjust as needed)
             const spans = Array.from(document.querySelectorAll('span'));
-            const rulesSpan = spans.find(span => span.textContent.trim().includes('Other Instructions'));
-            if (!rulesSpan) return '';
-            const listDescDiv = rulesSpan.closest('div.list-desc');
+            // For eligibility: 'Eligibility:', for rules: 'Instructions for Application Submission', etc.
+            const label = 'Other Rules'; // Replace as needed
+            const targetSpan = spans.find(span => span.textContent.trim().includes(label));
+            if (!targetSpan) return '';
+            const listDescDiv = targetSpan.closest('div.list-desc');
             if (!listDescDiv) return '';
             const innerDiv = listDescDiv.querySelector('div.list-desc-inner');
             if (!innerDiv) return '';
-            return Array.from(innerDiv.querySelectorAll('p')).map(p => p.textContent.trim()).filter(Boolean).join('\n');
+            // Extract both paragraphs and list items
+            const paragraphs = Array.from(innerDiv.querySelectorAll('p')).map(p => p.textContent.trim());
+            const listItems = Array.from(innerDiv.querySelectorAll('li')).map(li => li.textContent.trim());
+            return [...paragraphs, ...listItems].filter(Boolean).join('\n');
         });
 
         await browser.close();
