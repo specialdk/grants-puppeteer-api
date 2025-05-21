@@ -52,7 +52,7 @@ app.get('/eligibility', async (req, res) => {
         });
 
         await browser.close();
-        res.json({ goid, eligibility: eligibilityText || 'Not found.' });
+        res.json({ goid, eligibility: sectionTextText || 'Not found.' });
     } catch (err) {
         res.status(500).json({ error: err.toString() });
     }
@@ -103,7 +103,7 @@ app.get('/rules', async (req, res) => {
         });
 
         await browser.close();
-        res.json({ goid, rules: rulesText || 'Not found.' });
+        res.json({ goid, rules: sectionText || 'Not found.' });
     } catch (err) {
         res.status(500).json({ error: err.toString() });
     }
@@ -154,7 +154,7 @@ app.get('/other', async (req, res) => {
         });
 
         await browser.close();
-        res.json({ goid, rules: rulesText || 'Not found.' });
+        res.json({ goid, rules: sectionTextText || 'Not found.' });
     } catch (err) {
         res.status(500).json({ error: err.toString() });
     }
