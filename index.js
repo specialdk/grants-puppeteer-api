@@ -159,6 +159,36 @@ app.get('/other', async (req, res) => {
         res.status(500).json({ error: err.toString() });
     }
 });
+
+app.get('/attachments', async (req, res) => {
+    const goid = req.query.goid || 'GO5900';
+    try {
+        const browser = await puppeteer.launch({ headless: true, args: [/*...*/] });
+        const page = await browser.newPage();
+        await page.setUserAgent(/*...*/);
+
+        await page.goto('https://www.grants.gov.au/Search/GoAdvancedSearchForm?Type=Go&GoType=published&AgencyStatus=0', { waitUntil: 'domcontentloaded', timeout: 0 });
+
+        // Usual GOID input and navigation here...
+
+        // Extract attachments
+        const attachments = await page.evaluate(() => {
+            // Adjust selector to match where Addenda/Attachments are shown
+            const attachmentLinks = Array.from(document.querySelectorAll('a'))
+                .filter(a => a.href && (a.textContent.match(/Guideline|Addenda|Document|Attachment/i)));
+            return attachmentLinks.map(a => ({
+                name: a.textContent.trim(),
+                url: a.href
+            }));
+        });
+
+        await browser.close();
+        res.json({ goid, attachments });
+    } catch (err) {
+        res.status(500).json({ error: err.toString() });
+    }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log('Puppeteer API listening on port', PORT);
